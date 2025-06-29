@@ -11,24 +11,24 @@
     "type-check": "vue-tsc --build --force"
   },
   "dependencies": {
-    "aws-amplify": "^6.6.6",
-    "vue": "^3.4.21"
+    "aws-amplify": "^6.15.1",
+    "vue": "^3.5.17"
   },
   "devDependencies": {
-    "@aws-amplify/backend": "^1.5.0",
-    "@aws-amplify/backend-cli": "^1.2.9",
-    "@tsconfig/node20": "^20.1.4",
-    "@types/node": "^20.12.5",
-    "@vitejs/plugin-vue": "^5.0.4",
-    "@vue/tsconfig": "^0.5.1",
-    "aws-cdk": "^2.137.0",
-    "aws-cdk-lib": "^2.137.0",
-    "constructs": "^10.3.0",
-    "esbuild": "^0.20.2",
-    "npm-run-all2": "^6.1.2",
-    "tsx": "^4.7.2",
-    "typescript": "^5.4.5",
-    "vite": "^5.4.10",
-    "vue-tsc": "^2.0.11"
+    "@aws-amplify/backend": "^1.16.1",
+    "@aws-amplify/backend-cli": "^1.8.0",
+    "@tsconfig/node20": "^20.1.6",
+    "@types/node": "^24.0.7",
+    "@vitejs/plugin-vue": "^6.0.0",
+    "@vue/tsconfig": "^0.7.0",
+    "aws-cdk": "^2.1019.2",
+    "aws-cdk-lib": "^2.202.0",
+    "constructs": "^10.4.2",
+    "esbuild": "^0.25.5",
+    "npm-run-all2": "^8.0.4",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3",
+    "vite": "^7.0.0",
+    "vue-tsc": "^2.2.10"
   }
 }
