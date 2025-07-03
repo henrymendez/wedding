@@ -122,7 +122,7 @@ onUnmounted(() => {
 <style scoped>
 .wedding-homepage {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  background: rgb(212, 150, 125);
   font-family: 'Playfair Display', serif;
   color: #2c3e50;
 }
@@ -130,7 +130,7 @@ onUnmounted(() => {
 .header {
   text-align: center;
   padding: 3rem 2rem 2rem;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgb(229, 227, 220);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
@@ -259,7 +259,7 @@ onUnmounted(() => {
 
 .image-gallery {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
 }
 
@@ -312,7 +312,7 @@ onUnmounted(() => {
 .footer {
   text-align: center;
   padding: 2rem;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgb(229, 227, 220);
   backdrop-filter: blur(10px);
   border-top: 1px solid rgba(255, 255, 255, 0.2);
   font-style: italic;
