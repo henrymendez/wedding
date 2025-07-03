@@ -19,7 +19,7 @@ const images = [
 ]
 
 const currentImageIndex = ref(0)
-let imageInterval: number | null = null
+let imageInterval: number | NodeJS.Timeout | null = null
 
 const nextImage = () => {
   currentImageIndex.value = (currentImageIndex.value + 1) % images.length
