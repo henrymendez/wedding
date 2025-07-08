@@ -20,9 +20,55 @@ const images = [
 
 const currentImageIndex = ref(0)
 let imageInterval: number | NodeJS.Timeout | null = null
+const showCalendarOptions = ref(false)
 
 const nextImage = () => {
   currentImageIndex.value = (currentImageIndex.value + 1) % images.length
+}
+
+const previousImage = () => {
+  currentImageIndex.value = currentImageIndex.value === 0 ? images.length - 1 : currentImageIndex.value - 1
+}
+
+const goToImage = (index: number) => {
+  currentImageIndex.value = index
+}
+
+const addToCalendar = (type: 'google' | 'apple') => {
+  const eventDate = new Date('October 31, 2025 18:00:00')
+  const endDate = new Date('October 31, 2025 22:00:00')
+  
+  const eventDetails = {
+    title: 'Laura & Quique',
+    description: 'Join us for our special day!',
+    location: 'The Palace at Somerset, 333 Davidson Ave, Somerset, NJ 08873',
+    startDate: eventDate.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, ''),
+    endDate: endDate.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, ''),
+  }
+
+  if (type === 'google') {
+    const googleUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(eventDetails.title)}&dates=${eventDetails.startDate}/${eventDetails.endDate}&details=${encodeURIComponent(eventDetails.description)}&location=${encodeURIComponent(eventDetails.location)}`
+    window.open(googleUrl, '_blank')
+  } else if (type === 'apple') {
+    const appleUrl = `data:text/calendar;charset=utf8,BEGIN:VCALENDAR
+VERSION:2.0
+BEGIN:VEVENT
+URL:${encodeURIComponent(window.location.href)}
+DTSTART:${eventDetails.startDate}
+DTEND:${eventDetails.endDate}
+SUMMARY:${eventDetails.title}
+DESCRIPTION:${eventDetails.description}
+LOCATION:${eventDetails.location}
+END:VEVENT
+END:VCALENDAR`
+    
+    const link = document.createElement('a')
+    link.href = appleUrl
+    link.download = 'wedding-event.ics'
+    link.click()
+  }
+  
+  showCalendarOptions.value = false
 }
 
 const handleImageError = (event: Event) => {
@@ -45,7 +91,7 @@ onUnmounted(() => {
   <div class="wedding-homepage">
     <!-- Header -->
     <header class="header">
-      <h1 class="title">Quique & Laura</h1>
+      <h1 class="title">Laura & Quique</h1>
     </header>
 
     <!-- Main Content -->
@@ -56,25 +102,34 @@ onUnmounted(() => {
           <h2 class="section-title">Wedding Details</h2>
           
           <div class="detail-item">
-            <div class="detail-icon">📅</div>
             <div class="detail-content">
               <h3>When</h3>
-              <p>{{ weddingDetails.date }}</p>
+              <p class="date-link" @click="showCalendarOptions = !showCalendarOptions">{{ weddingDetails.date }}</p>
               <p class="time">{{ weddingDetails.time }}</p>
+              
+              <!-- Calendar Options Popup -->
+              <div v-if="showCalendarOptions" class="calendar-options">
+                <button @click="addToCalendar('google')" class="calendar-btn google-btn">
+                  📅 Add to Google Calendar
+                </button>
+                <button @click="addToCalendar('apple')" class="calendar-btn apple-btn">
+                  📅 Add to Apple Calendar
+                </button>
+              </div>
             </div>
           </div>
 
           <div class="detail-item">
-            <div class="detail-icon">📍</div>
             <div class="detail-content">
               <h3>Where</h3>
-              <p>{{ weddingDetails.venue }}</p>
-              <p class="address">333 Davidson Ave, Somerset, NJ 08873</p>
+              <a href="https://maps.app.goo.gl/CamNr3zETk7c9nAb8" target="_blank" rel="noopener noreferrer" class="venue-link">
+                <p>{{ weddingDetails.venue }}</p>
+                <p class="address">333 Davidson Ave, Somerset, NJ 08873</p>
+              </a>
             </div>
           </div>
 
           <div class="detail-item">
-            <div class="detail-icon">👔</div>
             <div class="detail-content">
               <h3>Dress Code</h3>
               <p>{{ weddingDetails.dressCode }}</p>
@@ -89,25 +144,29 @@ onUnmounted(() => {
         </div>
       </section>
 
-      <!-- Right Side - Rotating Images -->
+      <!-- Right Side - Image Carousel -->
       <section class="image-gallery">
-        <div class="image-container">
-          <img 
-            :src="images[currentImageIndex]" 
-            :alt="`Wedding image ${currentImageIndex + 1}`"
-            class="rotating-image"
-            @error="handleImageError"
-          />
-          <div class="image-overlay">
-            <div class="image-indicators">
-              <span 
-                v-for="(image, index) in images" 
-                :key="index"
-                :class="['indicator', { active: index === currentImageIndex }]"
-                @click="currentImageIndex = index"
-              ></span>
-            </div>
+        <div class="carousel-wrapper">
+          <div class="image-container">
+            <img 
+              :src="images[currentImageIndex]" 
+              :alt="`Wedding image ${currentImageIndex + 1}`"
+              class="carousel-image"
+              @error="handleImageError"
+            />
+            
+            <!-- Navigation Arrows -->
+            <button class="nav-arrow nav-prev" @click="previousImage">
+              <span>‹</span>
+            </button>
+            <button class="nav-arrow nav-next" @click="nextImage">
+              <span>›</span>
+            </button>
+            
+
           </div>
+          
+
         </div>
       </section>
     </main>
@@ -122,7 +181,7 @@ onUnmounted(() => {
 <style scoped>
 .wedding-homepage {
   min-height: 100vh;
-  background: rgb(212, 150, 125);
+  background: #9CAF88;
   font-family: 'Playfair Display', serif;
   color: #2c3e50;
 }
@@ -130,7 +189,7 @@ onUnmounted(() => {
 .header {
   text-align: center;
   padding: 3rem 2rem 2rem;
-  background: rgb(229, 227, 220);
+  background: #F4F0EB;
   backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
@@ -222,6 +281,60 @@ onUnmounted(() => {
   font-style: italic;
 }
 
+.venue-link {
+  text-decoration: none;
+  color: inherit;
+  transition: color 0.3s ease;
+}
+
+.venue-link:hover {
+  color: #667eea;
+}
+
+.date-link {
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.date-link:hover {
+  color: #667eea;
+}
+
+.calendar-options {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.calendar-btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.google-btn {
+  background: #4285f4;
+  color: white;
+}
+
+.google-btn:hover {
+  background: #3367d6;
+}
+
+.apple-btn {
+  background: #000;
+  color: white;
+}
+
+.apple-btn:hover {
+  background: #333;
+}
+
 .rsvp-section {
   text-align: center;
   margin-top: 2rem;
@@ -263,56 +376,75 @@ onUnmounted(() => {
   justify-content: center;
 }
 
+.carousel-wrapper {
+  width: 100%;
+  max-width: 500px;
+}
+
 .image-container {
   position: relative;
   width: 100%;
-  max-width: 500px;
   height: 400px;
   border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
 }
 
-.rotating-image {
+.carousel-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
   transition: opacity 0.5s ease;
 }
 
-.image-overlay {
+.nav-arrow {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: linear-gradient(transparent, rgba(0, 0, 0, 0.3));
-  padding: 2rem 1rem 1rem;
-}
-
-.image-indicators {
-  display: flex;
-  justify-content: center;
-  gap: 0.5rem;
-}
-
-.indicator {
-  width: 12px;
-  height: 12px;
+  bottom: 16px;
+  background: rgba(255, 255, 255, 0.3);
+  border: none;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.5);
   cursor: pointer;
-  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 300;
+  color: #2c3e50;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(10px);
 }
 
-.indicator.active {
-  background: white;
-  transform: scale(1.2);
+.nav-arrow:hover {
+  background: rgba(255, 255, 255, 1);
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  color: #667eea;
 }
+
+.nav-arrow:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.nav-prev {
+  left: 16px;
+}
+
+.nav-next {
+  right: 16px;
+}
+
+
+
+
 
 .footer {
   text-align: center;
   padding: 2rem;
-  background: rgb(229, 227, 220);
+  background: #F4F0EB;
   backdrop-filter: blur(10px);
   border-top: 1px solid rgba(255, 255, 255, 0.2);
   font-style: italic;
@@ -327,6 +459,10 @@ onUnmounted(() => {
     padding: 1rem;
   }
 
+  .image-gallery {
+    order: -1;
+  }
+
   .title {
     font-size: 2.5rem;
   }
@@ -338,6 +474,23 @@ onUnmounted(() => {
   .image-container {
     height: 300px;
   }
+
+  .nav-arrow {
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+    bottom: 12px;
+  }
+
+  .nav-prev {
+    left: 12px;
+  }
+
+  .nav-next {
+    right: 12px;
+  }
+
+
 }
 
 @media (max-width: 480px) {
@@ -365,6 +518,10 @@ onUnmounted(() => {
   .detail-icon {
     margin-right: 0;
     margin-bottom: 0.5rem;
+  }
+
+  .detail-content h3 {
+    text-align: left;
   }
 }
 </style>
