@@ -12,6 +12,15 @@ const schema = a.schema({
       content: a.string(),
     })
     .authorization((allow) => [allow.publicApiKey()]),
+  
+  RSVP: a
+    .model({
+      numberOfGuests: a.integer(),
+      Name: a.string(),
+      email: a.string(),
+      submittedAt: a.datetime(),
+    })
+    .authorization((allow) => [allow.publicApiKey()]),
 });
 
 export type Schema = ClientSchema<typeof schema>;
