@@ -9,7 +9,7 @@ const weddingDetails = {
   date: 'October 31, 2025',
   venue: 'The Palace at Somerset',
   time: '6:00 PM',
-  dressCode: 'Semi-Formal'
+  dressCode: 'Formal'
 }
 
 // Sample wedding images (you can replace these with actual images)
