@@ -56,12 +56,11 @@ const submitRSVP = async () => {
   isSubmitting.value = true
   
   try {
-    // For now, we'll store the primary guest's name and all guest names in the firstName field
+    // For now, we'll store the primary guest's name and all guest names in the Name field
     const allGuestNames = formData.value.guestNames.slice(0, formData.value.numberOfGuests).join(', ')
     await client.models.RSVP.create({
       numberOfGuests: formData.value.numberOfGuests,
-      firstName: allGuestNames,
-      lastName: '', // We'll use firstName to store all names
+      Name: allGuestNames,
       email: formData.value.email.trim().toLowerCase(),
       submittedAt: new Date().toISOString(),
     })
