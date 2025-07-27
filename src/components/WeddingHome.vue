@@ -6,10 +6,10 @@ const router = useRouter()
 
 // Wedding details
 const weddingDetails = {
-  date: 'October 31, 2025',
+  date: 'Friday, October 31, 2025',
   venue: 'The Palace at Somerset',
   time: '6:00 PM',
-  dressCode: 'Semi-Formal'
+  dressCode: 'Formal'
 }
 
 // Sample wedding images (you can replace these with actual images)
@@ -183,19 +183,23 @@ onUnmounted(() => {
 <style scoped>
 .wedding-homepage {
   min-height: 100vh;
-  background: #9CAF88;
-  background-image: url('/border-1.svg');
-  background-size: center;
-  background-repeat: no-repeat;
+  background: #9CAF88 !important;
+  background-image: url('/border-1.svg') !important;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+  background-position: cover !important;
+  background-attachment: fixed !important;
   font-family: 'Playfair Display', serif;
   color: #2c3e50;
+  position: relative;
+  z-index: 1;
 }
 
 .header {
   text-align: center;
   padding: 3rem 2rem 2rem;
-  background: #F4F0EB;
-  backdrop-filter: blur(10px);
+  background: rgba(244, 240, 235, 0.5);
+  backdrop-filter: blur(5px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
@@ -203,7 +207,7 @@ onUnmounted(() => {
   font-size: 3.5rem;
   font-weight: 400;
   margin: 0;
-  background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+  background: #DBA400;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -445,8 +449,8 @@ onUnmounted(() => {
 .footer {
   text-align: center;
   padding: 2rem;
-  background: #F4F0EB;
-  backdrop-filter: blur(10px);
+  background: rgba(244, 240, 235, 0.5);
+  backdrop-filter: blur(5px);
   border-top: 1px solid rgba(255, 255, 255, 0.2);
   font-style: italic;
   color: #7f8c8d;
