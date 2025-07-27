@@ -9,7 +9,7 @@ const weddingDetails = {
   date: 'October 31, 2025',
   venue: 'The Palace at Somerset',
   time: '6:00 PM',
-  dressCode: 'Formal'
+  dressCode: 'Semi-Formal'
 }
 
 // Sample wedding images (you can replace these with actual images)
@@ -184,6 +184,9 @@ onUnmounted(() => {
 .wedding-homepage {
   min-height: 100vh;
   background: #9CAF88;
+  background-image: url('/border-1.svg');
+  background-size: center;
+  background-repeat: no-repeat;
   font-family: 'Playfair Display', serif;
   color: #2c3e50;
 }

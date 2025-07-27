@@ -101,7 +101,7 @@ const images = [
 Update the names in the header section of `src/App.vue`:
 
 ```html
-<h1 class="title">Sarah & Michael</h1>
+<h1 class="title">Laura & Quique</h1>
 ```
 
 #### Customizing Colors
@@ -191,5 +191,3 @@ This project is private and intended for personal use.
 For questions or issues, please contact the development team.
 
 ---
-
-*Made with ❤️ for Sarah & Michael's special day*

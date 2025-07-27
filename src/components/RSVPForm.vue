@@ -200,6 +200,9 @@ const goBack = () => {
 .rsvp-form-container {
   min-height: 100vh;
   background: #9CAF88;
+  background-image: url('/border-1.svg');
+  background-size: cover;
+  background-repeat: no-repeat;
   display: flex;
   align-items: center;
   justify-content: center;
