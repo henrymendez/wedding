@@ -12,11 +12,25 @@ const weddingDetails = {
   dressCode: 'Formal'
 }
 
-// Sample wedding images (you can replace these with actual images)
+// All wedding images from the public/images directory
 const images = [
-  '/images/PXL_20230101_005501710.jpg',
+  '/images/PXL_20201024_213727564.PORTRAIT-01.COVER.jpg',
+  '/images/PXL_20201221_003043066.NIGHT.jpg',
+  '/images/PXL_20210814_002518125.NIGHT.jpg',
   '/images/PXL_20210911_191955906.jpg',
   '/images/PXL_20211219_033745888.NIGHT.jpg',
+  '/images/PXL_20220101_051433994.PORTRAIT.jpg',
+  '/images/PXL_20220707_161044318.jpg',
+  '/images/PXL_20220711_200245282.jpg',
+  '/images/PXL_20221028_163120890.jpg',
+  '/images/PXL_20221104_161821898.jpg',
+  '/images/PXL_20221210_024402467.NIGHT.jpg',
+  '/images/PXL_20230528_233916713.jpg',
+  '/images/PXL_20230930_135224496.jpg',
+  '/images/PXL_20231001_213432746.NIGHT.jpg',
+  '/images/PXL_20231003_163732272.jpg',
+  '/images/PXL_20240203_202333638.jpg',
+  '/images/PXL_20250219_165314687.PORTRAIT.jpg',
   '/images/PXL_20250221_172015897.jpg'
 ]
 
