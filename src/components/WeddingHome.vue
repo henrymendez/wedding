@@ -406,13 +406,7 @@ onUnmounted(() => {
 
 .nav-arrow:hover {
   background: rgba(255, 255, 255, 1);
-  transform: translateY(-2px) scale(1.05);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
   color: #667eea;
-}
-
-.nav-arrow:active {
-  transform: translateY(0) scale(0.98);
 }
 
 .nav-prev {
