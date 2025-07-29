@@ -38,7 +38,7 @@ const goToImage = (index: number) => {
 
 const addToCalendar = (type: 'google' | 'apple') => {
   const eventDate = new Date('October 31, 2025 18:00:00')
-  const endDate = new Date('October 31, 2025 23:30:00')
+  const endDate = new Date('November 1, 2025 00:00:00')
   
   const eventDetails = {
     title: 'Laura & Quique',
@@ -178,20 +178,29 @@ onUnmounted(() => {
   background-image: url('/border-1.svg') !important;
   background-size: cover !important;
   background-repeat: no-repeat !important;
-  background-position: cover !important;
-  background-attachment: fixed !important;
+  background-position: center !important;
+  background-attachment: scroll !important;
   font-family: 'Playfair Display', serif;
   color: #2c3e50;
   position: relative;
   z-index: 1;
+  /* Safari performance optimizations */
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 .header {
   text-align: center;
   padding: 3rem 2rem 2rem;
   background: rgba(244, 240, 235, 0.5);
+  -webkit-backdrop-filter: blur(5px);
   backdrop-filter: blur(5px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  /* Safari performance optimizations */
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
 }
 
 .title {
@@ -262,6 +271,10 @@ onUnmounted(() => {
   margin-top: 0.25rem;
 }
 
+.detail-content {
+  position: relative;
+}
+
 .detail-content h3 {
   margin: 0 0 0.5rem 0;
   font-size: 1.2rem;
@@ -301,10 +314,21 @@ onUnmounted(() => {
 }
 
 .calendar-options {
-  margin-top: 1rem;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 0.5rem;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 10px;
+  padding: 1rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(10px);
+  z-index: 100;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .calendar-btn {
@@ -441,10 +465,14 @@ onUnmounted(() => {
   text-align: center;
   padding: 2rem;
   background: rgba(244, 240, 235, 0.5);
+  -webkit-backdrop-filter: blur(5px);
   backdrop-filter: blur(5px);
   border-top: 1px solid rgba(255, 255, 255, 0.2);
   font-style: italic;
   color: #7f8c8d;
+  /* Safari performance optimizations */
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
 }
 
 /* Responsive Design */
