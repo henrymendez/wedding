@@ -38,7 +38,7 @@ const goToImage = (index: number) => {
 
 const addToCalendar = (type: 'google' | 'apple') => {
   const eventDate = new Date('October 31, 2025 18:00:00')
-  const endDate = new Date('October 31, 2025 22:00:00')
+  const endDate = new Date('October 31, 2025 23:30:00')
   
   const eventDetails = {
     title: 'Laura & Quique',
@@ -49,20 +49,11 @@ const addToCalendar = (type: 'google' | 'apple') => {
   }
 
   if (type === 'google') {
-    const googleUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(eventDetails.title)}&dates=${eventDetails.startDate}/${eventDetails.endDate}&details=${encodeURIComponent(eventDetails.description)}&location=${encodeURIComponent(eventDetails.location)}`
+    const googleUrl = `https://addcal.io/e/20dq5e64mkuc/google`
     window.open(googleUrl, '_blank')
   } else if (type === 'apple') {
-    const appleUrl = `data:text/calendar;charset=utf8,BEGIN:VCALENDAR
-VERSION:2.0
-BEGIN:VEVENT
-URL:${encodeURIComponent(window.location.href)}
-DTSTART:${eventDetails.startDate}
-DTEND:${eventDetails.endDate}
-SUMMARY:${eventDetails.title}
-DESCRIPTION:${eventDetails.description}
-LOCATION:${eventDetails.location}
-END:VEVENT
-END:VCALENDAR`
+    const appleUrl = `https://addcal.io/e/20dq5e64mkuc/apple`
+    window.open(appleUrl, '_blank')
     
     const link = document.createElement('a')
     link.href = appleUrl
