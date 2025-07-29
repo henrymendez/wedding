@@ -118,7 +118,7 @@ onUnmounted(() => {
               
               <!-- Calendar Button -->
               <div class="calendar-container">
-                <div class="addcal-btn" data-event="20dq5e64mkuc" data-base="undefined" data-theme="light"></div>
+                <div class="addcal-btn" data-event="20dq5e64mkuc" data-base="https://addcal.io" data-theme="light"></div>
               </div>
             </div>
           </div>
