@@ -111,7 +111,6 @@ onUnmounted(() => {
       <!-- Left Side - Wedding Details -->
       <section class="wedding-details">
         <div class="details-card">
-          <h2 class="section-title">Wedding Details</h2>
           
           <div class="detail-item">
             <div class="detail-content">
