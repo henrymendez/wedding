@@ -22,7 +22,7 @@ const images = [
 
 const currentImageIndex = ref(0)
 let imageInterval: number | NodeJS.Timeout | null = null
-const showCalendarOptions = ref(false)
+
 
 const nextImage = () => {
   currentImageIndex.value = (currentImageIndex.value + 1) % images.length
@@ -36,37 +36,23 @@ const goToImage = (index: number) => {
   currentImageIndex.value = index
 }
 
-const addToCalendar = (type: 'google' | 'apple') => {
-  const eventDate = new Date('October 31, 2025 18:00:00')
-  const endDate = new Date('November 1, 2025 00:00:00')
-  
-  const eventDetails = {
-    title: 'Laura & Quique',
-    description: 'Join us for our special day!',
-    location: 'The Palace at Somerset, 333 Davidson Ave, Somerset, NJ 08873',
-    startDate: eventDate.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, ''),
-    endDate: endDate.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, ''),
-  }
 
-  if (type === 'google') {
-    const googleUrl = `https://addcal.io/e/20dq5e64mkuc/google`
-    window.open(googleUrl, '_blank')
-  } else if (type === 'apple') {
-    const appleUrl = `https://addcal.io/e/20dq5e64mkuc/apple`
-    window.open(appleUrl, '_blank')
-    
-    const link = document.createElement('a')
-    link.href = appleUrl
-    link.download = 'wedding-event.ics'
-    link.click()
-  }
-  
-  showCalendarOptions.value = false
-}
 
 const handleImageError = (event: Event) => {
   const target = event.target as HTMLImageElement
   target.style.display = 'none'
+}
+
+const loadAddCalScript = () => {
+  // Check if script is already loaded
+  if (document.querySelector('script[src*="addcal.co"]')) {
+    return
+  }
+  
+  const script = document.createElement('script')
+  script.src = 'https://cdn.addcal.co/embed/1.1.0/button.min.js'
+  script.async = true
+  document.head.appendChild(script)
 }
 
 const goToRSVP = () => {
@@ -75,6 +61,8 @@ const goToRSVP = () => {
 
 onMounted(() => {
   imageInterval = setInterval(nextImage, 3000)
+  // Load AddCal script when component mounts
+  loadAddCalScript()
 })
 
 onUnmounted(() => {
@@ -101,17 +89,12 @@ onUnmounted(() => {
           <div class="detail-item">
             <div class="detail-content">
               <h3>When</h3>
-              <p class="date-link" @click="showCalendarOptions = !showCalendarOptions">{{ weddingDetails.date }}</p>
+              <p class="date">{{ weddingDetails.date }}</p>
               <p class="time">{{ weddingDetails.time }}</p>
               
-              <!-- Calendar Options Popup -->
-              <div v-if="showCalendarOptions" class="calendar-options">
-                <button @click="addToCalendar('google')" class="calendar-btn google-btn">
-                  📅 Add to Google Calendar
-                </button>
-                <button @click="addToCalendar('apple')" class="calendar-btn apple-btn">
-                  📅 Add to Apple Calendar
-                </button>
+              <!-- Calendar Button -->
+              <div class="calendar-container">
+                <div class="addcal-btn" data-event="20dq5e64mkuc" data-base="undefined" data-theme="light"></div>
               </div>
             </div>
           </div>
@@ -304,60 +287,13 @@ onUnmounted(() => {
   color: #667eea;
 }
 
-.date-link {
-  cursor: pointer;
-  transition: color 0.3s ease;
+
+
+.calendar-container {
+  margin-top: 1rem;
 }
 
-.date-link:hover {
-  color: #667eea;
-}
 
-.calendar-options {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  margin-top: 0.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 10px;
-  padding: 1rem;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-  backdrop-filter: blur(10px);
-  z-index: 100;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.calendar-btn {
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  font-weight: 500;
-  transition: all 0.3s ease;
-}
-
-.google-btn {
-  background: #4285f4;
-  color: white;
-}
-
-.google-btn:hover {
-  background: #3367d6;
-}
-
-.apple-btn {
-  background: #000;
-  color: white;
-}
-
-.apple-btn:hover {
-  background: #333;
-}
 
 .rsvp-section {
   text-align: center;
