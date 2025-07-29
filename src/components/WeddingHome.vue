@@ -14,6 +14,9 @@ const weddingDetails = {
 
 // All wedding images from the public/images directory
 const images = [
+  '/images/IMG-20250726-WA0012.jpg',
+  '/images/IMG-20250726-WA0017.jpg',
+  '/images/IMG-20250726-WA0021.jpg',
   '/images/PXL_20250221_172015897.jpg',
   '/images/PXL_20201221_003043066.NIGHT.jpg',
   '/images/PXL_20210814_002518125.NIGHT.jpg',
