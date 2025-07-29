@@ -12,28 +12,26 @@ const weddingDetails = {
   dressCode: 'Formal'
 }
 
-// All wedding images from the public/images directory
+// All wedding images from the public/images directory (WebP format for faster loading)
 const images = [
-  '/images/IMG-20250726-WA0012.jpg',
-  '/images/IMG-20250726-WA0017.jpg',
-  '/images/IMG-20250726-WA0021.jpg',
-  '/images/PXL_20250221_172015897.jpg',
-  '/images/PXL_20201221_003043066.NIGHT.jpg',
-  '/images/PXL_20210814_002518125.NIGHT.jpg',
-  '/images/PXL_20210911_191955906.jpg',
-  '/images/PXL_20211219_033745888.NIGHT.jpg',
-  '/images/PXL_20220101_051433994.PORTRAIT.jpg',
-  '/images/PXL_20220707_161044318.jpg',
-  '/images/PXL_20220711_200245282.jpg',
-  '/images/PXL_20221028_163120890.jpg',
-  '/images/PXL_20221104_161821898.jpg',
-  '/images/PXL_20221210_024402467.NIGHT.jpg',
-  '/images/PXL_20230528_233916713.jpg',
-  '/images/PXL_20230930_135224496.jpg',
-  '/images/PXL_20231001_213432746.NIGHT.jpg',
-  '/images/PXL_20231003_163732272.jpg',
-  '/images/PXL_20240203_202333638.jpg',
-  '/images/PXL_20250219_165314687.PORTRAIT.jpg'
+  '/images/IMG-20250726-WA0012.webp',
+  '/images/IMG-20250726-WA0017.webp',
+  '/images/IMG-20250726-WA0021.webp',
+  '/images/PXL_20250221_172015897.webp',
+  '/images/PXL_20210911_191955906.webp',
+  '/images/PXL_20211219_033745888.NIGHT.webp',
+  '/images/PXL_20220101_051433994.PORTRAIT.webp',
+  '/images/PXL_20220707_161044318.webp',
+  '/images/PXL_20220711_200245282.webp',
+  '/images/PXL_20221028_163120890.webp',
+  '/images/PXL_20221104_161821898.webp',
+  '/images/PXL_20221210_024402467.NIGHT.webp',
+  '/images/PXL_20230528_233916713.webp',
+  '/images/PXL_20230930_135224496.webp',
+  '/images/PXL_20231001_213432746.NIGHT.webp',
+  '/images/PXL_20231003_163732272.webp',
+  '/images/PXL_20240203_202333638.webp',
+  '/images/PXL_20250219_165314687.PORTRAIT.webp'
 ]
 
 const currentImageIndex = ref(0)
