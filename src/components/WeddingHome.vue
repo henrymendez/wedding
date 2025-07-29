@@ -14,7 +14,7 @@ const weddingDetails = {
 
 // All wedding images from the public/images directory
 const images = [
-  '/images/PXL_20201024_213727564.PORTRAIT-01.COVER.jpg',
+  '/images/PXL_20250221_172015897.jpg',
   '/images/PXL_20201221_003043066.NIGHT.jpg',
   '/images/PXL_20210814_002518125.NIGHT.jpg',
   '/images/PXL_20210911_191955906.jpg',
@@ -30,8 +30,7 @@ const images = [
   '/images/PXL_20231001_213432746.NIGHT.jpg',
   '/images/PXL_20231003_163732272.jpg',
   '/images/PXL_20240203_202333638.jpg',
-  '/images/PXL_20250219_165314687.PORTRAIT.jpg',
-  '/images/PXL_20250221_172015897.jpg'
+  '/images/PXL_20250219_165314687.PORTRAIT.jpg'
 ]
 
 const currentImageIndex = ref(0)
@@ -40,10 +39,21 @@ let imageInterval: number | NodeJS.Timeout | null = null
 
 const nextImage = () => {
   currentImageIndex.value = (currentImageIndex.value + 1) % images.length
+  // Disable auto-scroll when user manually navigates
+  disableAutoScroll()
 }
 
 const previousImage = () => {
   currentImageIndex.value = currentImageIndex.value === 0 ? images.length - 1 : currentImageIndex.value - 1
+  // Disable auto-scroll when user manually navigates
+  disableAutoScroll()
+}
+
+const disableAutoScroll = () => {
+  if (imageInterval) {
+    clearInterval(imageInterval)
+    imageInterval = null
+  }
 }
 
 const goToImage = (index: number) => {
