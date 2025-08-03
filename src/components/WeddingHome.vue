@@ -142,7 +142,7 @@ onUnmounted(() => {
 
           <div class="rsvp-section">
             <h3>RSVP</h3>
-            <p>Please RSVP by September 30, 2025</p>
+            <p><u>Please RSVP by September 30, 2025</u></p>
             <button class="rsvp-button" @click="goToRSVP">RSVP Now</button>
           </div>
         </div>
@@ -269,7 +269,7 @@ onUnmounted(() => {
   padding: 1rem;
   border-radius: 15px;
   background: rgba(102, 126, 234, 0.05);
-  border-left: 4px solid #667eea;
+  border-left: 4px solid #DBA400;
 }
 
 .detail-icon {
@@ -285,7 +285,7 @@ onUnmounted(() => {
 .detail-content h3 {
   margin: 0 0 0.5rem 0;
   font-size: 1.2rem;
-  color: #667eea;
+  color: #DBA400;
   font-weight: 600;
 }
 
