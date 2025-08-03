@@ -130,7 +130,7 @@ const goBack = () => {
             :key="index"
             class="form-group"
           >
-            <label :for="`guestName${index + 1}`">Guest {{ index + 1 }} Name</label>
+            <label :for="`guestName${index + 1}`">Guest {{ index + 1 }}</label>
             <input 
               :id="`guestName${index + 1}`" 
               v-model="formData.guestNames[index]"
@@ -169,7 +169,9 @@ const goBack = () => {
       </div>
       
       <div v-else class="success-content">
-        <div class="success-icon">🎉</div>
+        <div class="success-icon">
+          <img src="/images/coffee-bagel2.png" alt="Coffee meets bagel" class="success-image" />
+        </div>
         <h2 class="success-title">Thank You!</h2>
         <p class="success-message">
           Your RSVP has been submitted successfully. We look forward to celebrating with you!
@@ -314,8 +316,18 @@ const goBack = () => {
 }
 
 .success-icon {
-  font-size: 4rem;
   margin-bottom: 1rem;
+  display: flex;
+  justify-content: center;
+}
+
+.success-image {
+  width: 204px;
+  height: 204px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid white;
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
 }
 
 .success-title {
@@ -336,7 +348,7 @@ const goBack = () => {
   padding: 1.5rem;
   border-radius: 15px;
   margin-bottom: 2rem;
-  border-left: 4px solid #667eea;
+  border-left: 4px solid #DBA400;
 }
 
 .rsvp-details p {
