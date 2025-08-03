@@ -499,5 +499,9 @@ onUnmounted(() => {
   .detail-content h3 {
     text-align: left;
   }
+ 
+  .detail-content p {
+    text-align: left;
+  }
 }
 </style> 
