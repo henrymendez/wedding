@@ -40,12 +40,20 @@ let imageInterval: number | NodeJS.Timeout | null = null
 
 const nextImage = () => {
   currentImageIndex.value = (currentImageIndex.value + 1) % images.length
-  // Disable auto-scroll when user manually navigates
-  disableAutoScroll()
 }
 
 const previousImage = () => {
   currentImageIndex.value = currentImageIndex.value === 0 ? images.length - 1 : currentImageIndex.value - 1
+}
+
+const nextImageManual = () => {
+  nextImage()
+  // Disable auto-scroll when user manually navigates
+  disableAutoScroll()
+}
+
+const previousImageManual = () => {
+  previousImage()
   // Disable auto-scroll when user manually navigates
   disableAutoScroll()
 }
@@ -160,10 +168,10 @@ onUnmounted(() => {
             />
             
             <!-- Navigation Arrows -->
-            <button class="nav-arrow nav-prev" @click="previousImage">
+            <button class="nav-arrow nav-prev" @click="previousImageManual">
               <span>‹</span>
             </button>
-            <button class="nav-arrow nav-next" @click="nextImage">
+            <button class="nav-arrow nav-next" @click="nextImageManual">
               <span>›</span>
             </button>
           </div>
