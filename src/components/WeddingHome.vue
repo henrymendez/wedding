@@ -8,6 +8,7 @@ const router = useRouter()
 const weddingDetails = {
   date: 'Friday, October 31, 2025',
   venue: 'The Palace at Somerset',
+  hotel: 'Delta Hotels Somerset',
   time: '6:00 PM',
   dressCode: 'Formal'
 }
@@ -137,6 +138,16 @@ onUnmounted(() => {
               <a href="https://maps.app.goo.gl/CamNr3zETk7c9nAb8" target="_blank" rel="noopener noreferrer" class="venue-link">
                 <p>{{ weddingDetails.venue }}</p>
                 <p class="address">333 Davidson Ave, Somerset, NJ 08873</p>
+              </a>
+            </div>
+          </div>
+
+          <div class="detail-item">
+            <div class="detail-content">
+              <h3>Hotel Accommodations</h3>
+              <a href="https://www.marriott.com/event-reservations/reservation-link.mi?id=1757347417019&key=GRP&app=resvlink" target="_blank" rel="noopener noreferrer" class="venue-link">
+                <p>{{ weddingDetails.hotel }}</p>
+                <p class="address">110 Davidson Avenue Somerset, NJ 08873</p>
               </a>
             </div>
           </div>
