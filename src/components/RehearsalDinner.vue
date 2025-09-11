@@ -21,9 +21,9 @@ const bridesmaids = ref([
 
 const groomsmen = ref([
   { name: 'Alonso Mendez', role: 'Best Man' },
+  { name: 'Marcos Mendez', role: 'Groomsman' },
   { name: 'Dave Amorin', role: 'Groomsman' },
   { name: 'Rob Amorin', role: 'Groomsman' },
-  { name: 'Marcos Mendez', role: 'Groomsman' },
   { name: 'Steven Lake', role: 'Groomsman' },
   { name: 'Kai Conforme', role: 'Ring Bearer' }
 ])
