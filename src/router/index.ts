@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import WeddingHome from '@/components/WeddingHome.vue'
 import RSVPForm from '@/components/RSVPForm.vue'
+import RehearsalDinner from '@/components/RehearsalDinner.vue'
 
 const routes = [
   {
@@ -12,6 +13,11 @@ const routes = [
     path: '/rsvp',
     name: 'RSVP',
     component: RSVPForm
+  },
+  {
+    path: '/rehearsal-dinner',
+    name: 'RehearsalDinner',
+    component: RehearsalDinner
   }
 ]
 
