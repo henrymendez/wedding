@@ -58,17 +58,54 @@ const submitRSVP = async () => {
   try {
     // For now, we'll store the primary guest's name and all guest names in the Name field
     const allGuestNames = formData.value.guestNames.slice(0, formData.value.numberOfGuests).join(', ')
-    await client.models.RSVP.create({
+    
+    console.log('Submitting RSVP with data:', {
       numberOfGuests: formData.value.numberOfGuests,
       Name: allGuestNames,
       email: formData.value.email.trim().toLowerCase(),
       submittedAt: new Date().toISOString(),
     })
     
+    const result = await client.models.RSVP.create({
+      numberOfGuests: formData.value.numberOfGuests,
+      Name: allGuestNames,
+      email: formData.value.email.trim().toLowerCase(),
+      submittedAt: new Date().toISOString(),
+    })
+    
+    console.log('RSVP submission result:', result)
+    
+    // Check if the result has errors
+    if (result.errors && result.errors.length > 0) {
+      console.error('GraphQL errors:', result.errors)
+      error.value = `Submission failed: ${result.errors.map(e => e.message).join(', ')}`
+      return
+    }
+    
+    // Check if we actually got a created record
+    if (!result.data) {
+      console.error('No data returned from create operation')
+      error.value = 'Submission failed: No data returned from server'
+      return
+    }
+    
+    console.log('RSVP successfully created with ID:', result.data.id)
     isSubmitted.value = true
   } catch (err) {
     console.error('Error submitting RSVP:', err)
-    error.value = 'There was an error submitting your RSVP. Please try again.'
+    
+    // More specific error messages
+    if (err instanceof Error) {
+      if (err.message.includes('Network')) {
+        error.value = 'Network error. Please check your connection and try again.'
+      } else if (err.message.includes('Unauthorized')) {
+        error.value = 'Authentication error. Please refresh the page and try again.'
+      } else {
+        error.value = `Submission failed: ${err.message}`
+      }
+    } else {
+      error.value = 'There was an unexpected error submitting your RSVP. Please try again.'
+    }
   } finally {
     isSubmitting.value = false
   }
