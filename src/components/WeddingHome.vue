@@ -170,9 +170,8 @@ onUnmounted(() => {
           </div>
 
           <div class="photo-collage-section">
-            <h3>Share Your Photos!</h3>
-            <p>Upload and share your photos with us!</p>
-            <button class="photo-collage-button" @click="goToPhotoCollage">📸 Photo Collage</button>
+            <h3>Share your photos with us!</h3>
+            <button class="photo-collage-button" @click="goToPhotoCollage">📸 Photo gallery</button>
           </div>
         </div>
       </section>
@@ -385,9 +384,9 @@ onUnmounted(() => {
 
 .photo-collage-section {
   text-align: center;
-  margin-top: 2rem;
-  padding-top: 2rem;
-  border-top: 1px solid rgba(102, 126, 234, 0.2);
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 0.5px solid rgba(102, 126, 234, 0.2);
 }
 
 .photo-collage-section h3 {

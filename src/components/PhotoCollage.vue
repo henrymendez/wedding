@@ -428,7 +428,7 @@ const closePhotoSwipe = () => {
   <div class="photo-collage-page">
     <!-- Header -->
     <header class="header">
-      <p class="subtitle">Share your favorite wedding pictures!</p>
+      <p class="subtitle">Share your favorite memories!</p>
     </header>
 
     <!-- Main Content -->
