@@ -93,6 +93,10 @@ const goToRSVP = () => {
   router.push('/rsvp')
 }
 
+const goToPhotoCollage = () => {
+  router.push('/photo-collage')
+}
+
 onMounted(() => {
   imageInterval = setInterval(nextImage, 3000)
   // Load AddCal script when component mounts
@@ -163,6 +167,12 @@ onUnmounted(() => {
             <h3>RSVP</h3>
             <p><u>Please RSVP by September 30, 2025</u></p>
             <button class="rsvp-button" @click="goToRSVP">RSVP Now</button>
+          </div>
+
+          <div class="photo-collage-section">
+            <h3>Share Your Photos!</h3>
+            <p>Upload and share your photos with us!</p>
+            <button class="photo-collage-button" @click="goToPhotoCollage">📸 Photo Collage</button>
           </div>
         </div>
       </section>
@@ -371,6 +381,42 @@ onUnmounted(() => {
 .rsvp-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
+}
+
+.photo-collage-section {
+  text-align: center;
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(102, 126, 234, 0.2);
+}
+
+.photo-collage-section h3 {
+  margin: 0 0 0.5rem 0;
+  color: #667eea;
+}
+
+.photo-collage-section p {
+  margin: 0 0 1rem 0;
+  color: #7f8c8d;
+}
+
+.photo-collage-button {
+  background: linear-gradient(45deg, #4ecdc4 0%, #44a08d 100%);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 20px rgba(78, 205, 196, 0.3);
+  font-family: inherit;
+}
+
+.photo-collage-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 30px rgba(78, 205, 196, 0.4);
 }
 
 .image-gallery {
