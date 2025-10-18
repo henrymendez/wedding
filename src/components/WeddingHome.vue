@@ -89,12 +89,13 @@ const loadAddCalScript = () => {
   document.head.appendChild(script)
 }
 
-const goToRSVP = () => {
-  router.push('/rsvp')
-}
 
 const goToPhotoCollage = () => {
   router.push('/photo-collage')
+}
+
+const goToBridalParty = () => {
+  router.push('/bridal-party')
 }
 
 onMounted(() => {
@@ -123,6 +124,16 @@ onUnmounted(() => {
       <section class="wedding-details">
         <div class="details-card">
           
+          <div class="photo-collage-section">
+            <h3>Share your photos with us!</h3>
+            <button class="photo-collage-button" @click="goToPhotoCollage">📸 Photo gallery</button>
+          </div>
+
+          <div class="bridal-party-section">
+            <h3>Meet the Bridal Party</h3>
+            <button class="bridal-party-button" @click="goToBridalParty">👰🤵 Bridal Party</button>
+          </div>
+
           <div class="detail-item">
             <div class="detail-content">
               <h3>When</h3>
@@ -161,17 +172,6 @@ onUnmounted(() => {
               <h3>Dress Code</h3>
               <p>{{ weddingDetails.dressCode }}</p>
             </div>
-          </div>
-
-          <div class="rsvp-section">
-            <h3>RSVP</h3>
-            <p><u>Please RSVP by September 30, 2025</u></p>
-            <button class="rsvp-button" @click="goToRSVP">RSVP Now</button>
-          </div>
-
-          <div class="photo-collage-section">
-            <h3>Share your photos with us!</h3>
-            <button class="photo-collage-button" @click="goToPhotoCollage">📸 Photo gallery</button>
           </div>
         </div>
       </section>
@@ -347,46 +347,12 @@ onUnmounted(() => {
 
 
 
-.rsvp-section {
-  text-align: center;
-  margin-top: 2rem;
-  padding-top: 2rem;
-  border-top: 1px solid rgba(102, 126, 234, 0.2);
-}
-
-.rsvp-section h3 {
-  margin: 0 0 0.5rem 0;
-  color: #667eea;
-}
-
-.rsvp-section p {
-  margin: 0 0 1rem 0;
-  color: #7f8c8d;
-}
-
-.rsvp-button {
-  background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  padding: 1rem 2rem;
-  border-radius: 50px;
-  font-size: 1.1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-}
-
-.rsvp-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
-}
 
 .photo-collage-section {
   text-align: center;
-  margin-top: 1rem;
-  padding-top: 1rem;
-  border-top: 0.5px solid rgba(102, 126, 234, 0.2);
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 0.5px solid rgba(102, 126, 234, 0.2);
 }
 
 .photo-collage-section h3 {
@@ -416,6 +382,42 @@ onUnmounted(() => {
 .photo-collage-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 15px 30px rgba(78, 205, 196, 0.4);
+}
+
+.bridal-party-section {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 0.5px solid rgba(102, 126, 234, 0.2);
+}
+
+.bridal-party-section h3 {
+  margin: 0 0 0.5rem 0;
+  color: #667eea;
+}
+
+.bridal-party-section p {
+  margin: 0 0 1rem 0;
+  color: #7f8c8d;
+}
+
+.bridal-party-button {
+  background: linear-gradient(45deg, #DBA400 0%, #F4A261 100%);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 20px rgba(219, 164, 0, 0.3);
+  font-family: inherit;
+}
+
+.bridal-party-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 30px rgba(219, 164, 0, 0.4);
 }
 
 .image-gallery {

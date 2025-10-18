@@ -3,6 +3,7 @@ import WeddingHome from '@/components/WeddingHome.vue'
 import RSVPForm from '@/components/RSVPForm.vue'
 import RehearsalDinner from '@/components/RehearsalDinner.vue'
 import PhotoCollage from '@/components/PhotoCollage.vue'
+import BridalParty from '@/components/BridalParty.vue'
 
 const routes = [
   {
@@ -24,6 +25,11 @@ const routes = [
     path: '/photo-collage',
     name: 'PhotoCollage',
     component: PhotoCollage
+  },
+  {
+    path: '/bridal-party',
+    name: 'BridalParty',
+    component: BridalParty
   }
 ]
 
