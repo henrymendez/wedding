@@ -18,7 +18,8 @@ const groomsmen = ref([
   { name: 'Dave Amorin', role: 'Groomsman' },
   { name: 'Rob Amorin', role: 'Groomsman' },
   { name: 'Steven Lake', role: 'Groomsman' },
-  { name: 'Kai Conforme', role: 'Ring Bearer' }
+  { name: 'Kai Conforme', role: 'Ring Bearer' },
+  { name: 'Aiden Jaghab', role: 'Ring Bearer' }
 ])
 </script>
 
