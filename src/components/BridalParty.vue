@@ -8,7 +8,7 @@ const bridesmaids = ref([
   { name: 'Tanya Briones', role: 'Bridesmaid' },
   { name: 'Daniela Meza', role: 'Bridesmaid' },
   { name: 'Maria Risco', role: 'Bridesmaid' },
-  { name: 'Victoria Jaghab', role: 'Flower Girl' },
+  { name: 'Victoria Jaghab', role: 'Junior Bridesmaid' },
   { name: 'Nina Lake', role: 'Flower Girl' }
 ])
 
