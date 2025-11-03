@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { generateClient } from 'aws-amplify/data'
 import { uploadData, getUrl, list } from 'aws-amplify/storage'
 import type { Schema } from '../../amplify/data/resource'
@@ -20,6 +20,8 @@ const uploadProgress = ref(0)
 const error = ref('')
 const success = ref('')
 const photoSwipeInstance = ref<PhotoSwipe | null>(null)
+const displayedImagesCount = ref(10) // Number of images to display initially
+const IMAGES_PER_PAGE = 10 // Number of images to load per batch
 
 // File input reference
 const fileInput = ref<HTMLInputElement | null>(null)
@@ -422,6 +424,22 @@ const closePhotoSwipe = () => {
   }
 }
 
+// Computed property for displayed images (lazy loading)
+const displayedImages = computed(() => {
+  return uploadedImages.value.slice(0, displayedImagesCount.value)
+})
+
+// Check if there are more images to load
+const hasMoreImages = computed(() => {
+  return displayedImagesCount.value < uploadedImages.value.length
+})
+
+// Load more images
+const loadMoreImages = () => {
+  const nextCount = displayedImagesCount.value + IMAGES_PER_PAGE
+  displayedImagesCount.value = Math.min(nextCount, uploadedImages.value.length)
+}
+
 </script>
 
 <template>
@@ -496,20 +514,35 @@ const closePhotoSwipe = () => {
             <p>No photos uploaded yet. Be the first to share a memory!</p>
           </div>
           
-          <div v-else class="photo-grid">
-            <div 
-              v-for="(imageData, index) in uploadedImages" 
-              :key="index"
-              class="photo-item"
-              @click="openPhotoSwipe(index)"
-            >
-              <img 
-                :src="imageData.thumbnailUrl" 
-                :alt="`Wedding photo ${index + 1}`"
-                class="photo-image"
-                @load="console.log(`Successfully loaded image ${index + 1}:`, imageData.thumbnailUrl)"
-                @error="handleImageError(imageData.thumbnailUrl, index)"
-              />
+          <div v-else>
+            <div class="photo-grid">
+              <div 
+                v-for="(imageData, index) in displayedImages" 
+                :key="index"
+                class="photo-item"
+                @click="openPhotoSwipe(index)"
+              >
+                <img 
+                  :src="imageData.thumbnailUrl" 
+                  :alt="`Wedding photo ${index + 1}`"
+                  class="photo-image"
+                  loading="lazy"
+                  @load="console.log(`Successfully loaded image ${index + 1}:`, imageData.thumbnailUrl)"
+                  @error="handleImageError(imageData.thumbnailUrl, index)"
+                />
+              </div>
+            </div>
+            
+            <!-- Load More Button -->
+            <div v-if="hasMoreImages" class="load-more-container">
+              <button @click="loadMoreImages" class="load-more-button">
+                Load More Photos ({{ uploadedImages.length - displayedImagesCount }} remaining)
+              </button>
+            </div>
+            
+            <!-- Show total count when all images are loaded -->
+            <div v-else-if="uploadedImages.length > 0" class="all-loaded-message">
+              <p>All {{ uploadedImages.length }} photos loaded</p>
             </div>
           </div>
         </div>
@@ -740,6 +773,45 @@ const closePhotoSwipe = () => {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.load-more-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+  padding: 1rem;
+}
+
+.load-more-button {
+  background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 0.875rem 1.75rem;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+  font-family: inherit;
+}
+
+.load-more-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
+}
+
+.all-loaded-message {
+  text-align: center;
+  padding: 2rem;
+  color: #7f8c8d;
+  font-style: italic;
+  margin-top: 1rem;
+}
+
+.all-loaded-message p {
+  margin: 0;
+  font-size: 0.95rem;
 }
 
 
