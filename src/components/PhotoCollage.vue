@@ -42,88 +42,102 @@ onUnmounted(() => {
 // Load existing images from S3
 const loadExistingImages = async () => {
   try {
-    console.log('Loading existing images from S3...')
+    // Load thumbnails and originals in parallel
+    const [thumbnailsResult, originalsResult] = await Promise.all([
+      list({
+        prefix: 'wedding-photos/thumbnails/',
+        options: {
+          listAll: true
+        }
+      }),
+      list({
+        prefix: 'wedding-photos/originals/',
+        options: {
+          listAll: true
+        }
+      })
+    ])
     
-    // List all thumbnail objects in the wedding-photos/thumbnails folder
-    const result = await list({
-      prefix: 'wedding-photos/thumbnails/',
-      options: {
-        listAll: true
+    // Filter and create a map of originals by base filename for O(1) lookup
+    const originalsMap = new Map<string, { key: string, extension: string }>()
+    originalsResult.items.forEach(item => {
+      if ((item.size ?? 0) > 0) {
+        // Extract base filename (remove prefix and extension)
+        const keyParts = item.key.split('/')
+        const filename = keyParts[keyParts.length - 1]
+        const baseFileName = filename.substring(0, filename.lastIndexOf('.'))
+        if (baseFileName) {
+          originalsMap.set(baseFileName, {
+            key: item.key,
+            extension: item.key.split('.').pop() ?? 'jpg'
+          })
+        }
       }
     })
     
-    console.log('Found thumbnail objects:', result.items)
-    console.log('Number of thumbnails found:', result.items.length)
-    
-    // Filter out any items that might be folders or non-image files
-    const imageItems = result.items.filter(item => {
+    // Filter thumbnails
+    const imageItems = thumbnailsResult.items.filter(item => {
       const isWebP = item.key.match(/\.webp$/i)
-      console.log(`Thumbnail ${item.key}: isWebP=${!!isWebP}, size=${item.size}`)
       return isWebP && (item.size ?? 0) > 0
     })
     
-    console.log('Filtered image items:', imageItems)
+    // Initialize with empty array to show loading state
+    uploadedImages.value = []
     
-    // Get URLs for each image and find corresponding originals
-    const imagePromises = imageItems.map(async (item, index) => {
-      try {
-        console.log(`Getting URL for item ${index + 1}: ${item.key}`)
-        const thumbnailUrl = await getUrl({
-          key: item.key,
-          options: {
-            expiresIn: 3600 // 1 hour
+    // Batch URL generation (process in chunks to avoid overwhelming the API)
+    const BATCH_SIZE = 20
+    
+    for (let i = 0; i < imageItems.length; i += BATCH_SIZE) {
+      const batch = imageItems.slice(i, i + BATCH_SIZE)
+      
+      const batchPromises = batch.map(async (item) => {
+        try {
+          // Generate thumbnail URL
+          const thumbnailUrl = await getUrl({
+            key: item.key,
+            options: {
+              expiresIn: 3600 // 1 hour
+            }
+          })
+          
+          // Extract base filename from thumbnail key
+          const keyParts = item.key.split('/')
+          const filename = keyParts[keyParts.length - 1]
+          const baseFileName = filename.replace('.webp', '')
+          
+          // Look up original in map (O(1) lookup)
+          const original = originalsMap.get(baseFileName)
+          
+          if (original) {
+            return {
+              thumbnailUrl: thumbnailUrl.url.toString(),
+              originalKey: original.key,
+              originalExtension: original.extension
+            }
+          } else {
+            // Fallback to thumbnail
+            return {
+              thumbnailUrl: thumbnailUrl.url.toString(),
+              originalKey: item.key,
+              originalExtension: 'webp'
+            }
           }
-        })
-        
-        // Extract base filename from thumbnail key
-        const baseFileName = item.key.replace('wedding-photos/thumbnails/', '').replace('.webp', '')
-        
-        // Try to find the original file
-        const originalsResult = await list({
-          prefix: 'wedding-photos/originals/',
-          options: {
-            listAll: true
-          }
-        })
-        
-        const matchingOriginal = originalsResult.items.find(originalItem => 
-          originalItem.key.includes(baseFileName) && (originalItem.size ?? 0) > 0
-        )
-        
-        if (matchingOriginal) {
-          console.log(`Found matching original for ${baseFileName}: ${matchingOriginal.key}`)
-          return {
-            thumbnailUrl: thumbnailUrl.url.toString(),
-            originalKey: matchingOriginal.key,
-            originalExtension: matchingOriginal.key.split('.').pop() ?? 'jpg'
-          }
-        } else {
-          console.log(`No original found for ${baseFileName}, using thumbnail only`)
-          return {
-            thumbnailUrl: thumbnailUrl.url.toString(),
-            originalKey: item.key, // Fallback to thumbnail
-            originalExtension: 'webp'
-          }
+        } catch (err) {
+          console.error(`Error processing ${item.key}:`, err)
+          return null
         }
-      } catch (err) {
-        console.error(`Error getting URL for ${item.key}:`, err)
-        return null
-      }
-    })
-    
-    const imageData = await Promise.all(imagePromises)
-    console.log('All generated image data:', imageData)
-    
-    // Filter out null values and update the images array
-    const validImageData = imageData.filter(data => data !== null) as Array<{
-      thumbnailUrl: string
-      originalKey: string
-      originalExtension: string
-    }>
-    uploadedImages.value = validImageData
-    
-    console.log(`Loaded ${uploadedImages.value.length} valid images`)
-    console.log('Final image URLs:', uploadedImages.value)
+      })
+      
+      const batchResults = await Promise.all(batchPromises)
+      const validBatch = batchResults.filter(data => data !== null) as Array<{
+        thumbnailUrl: string
+        originalKey: string
+        originalExtension: string
+      }>
+      
+      // Update images array progressively - users see images appear as they load
+      uploadedImages.value.push(...validBatch)
+    }
     
   } catch (err) {
     console.error('Error loading images:', err)
@@ -143,37 +157,205 @@ const handleFileSelect = (event: Event) => {
   }
 }
 
-// Create high-quality WebP thumbnail from image file
+// Read EXIF orientation from image file
+const getExifOrientation = (file: File): Promise<number> => {
+  return new Promise((resolve) => {
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      try {
+        const view = new DataView(e.target?.result as ArrayBuffer)
+        
+        // Check JPEG header
+        if (view.getUint16(0, false) !== 0xFFD8) {
+          resolve(1) // Not a JPEG, default orientation
+          return
+        }
+        
+        const length = view.byteLength
+        let offset = 2
+        
+        // Search for EXIF segment (0xFFE1)
+        while (offset < length - 1) {
+          const marker = view.getUint16(offset, false)
+          
+          // Check if this is an APP1 segment (0xFFE1)
+          if (marker === 0xFFE1) {
+            // Check for EXIF identifier (0x45786966 = "Exif")
+            if (view.getUint32(offset + 4, false) === 0x45786966) {
+              // Check byte order (0x4949 = Intel/Little-endian, 0x4D4D = Motorola/Big-endian)
+              const little = view.getUint16(offset + 10, false) === 0x4949
+              
+              // Get IFD offset
+              const ifdOffset = little 
+                ? view.getUint32(offset + 14, little) 
+                : view.getUint32(offset + 14, false)
+              
+              // Get number of directory entries
+              const count = little 
+                ? view.getUint16(offset + 18 + ifdOffset, little) 
+                : view.getUint16(offset + 18 + ifdOffset, false)
+              
+              // Search for orientation tag (0x0112)
+              for (let i = 0; i < count; i++) {
+                const entryOffset = offset + 20 + ifdOffset + (i * 12)
+                const tag = little 
+                  ? view.getUint16(entryOffset, little) 
+                  : view.getUint16(entryOffset, false)
+                
+                if (tag === 0x0112) { // Orientation tag
+                  const value = little 
+                    ? view.getUint16(entryOffset + 8, little) 
+                    : view.getUint16(entryOffset + 8, false)
+                  resolve(value)
+                  return
+                }
+              }
+              break
+            }
+          }
+          
+          // Move to next segment
+          const segmentLength = view.getUint16(offset + 2, false)
+          offset += 2 + segmentLength
+        }
+        
+        resolve(1) // Default orientation if not found
+      } catch (err) {
+        console.warn('Error reading EXIF orientation:', err)
+        resolve(1) // Default orientation on error
+      }
+    }
+    reader.onerror = () => resolve(1)
+    reader.readAsArrayBuffer(file.slice(0, 64 * 1024)) // Read first 64KB
+  })
+}
+
+// Apply EXIF orientation transformations to canvas
+const applyOrientation = (ctx: CanvasRenderingContext2D, orientation: number, width: number, height: number) => {
+  switch (orientation) {
+    case 2:
+      // Horizontal flip
+      ctx.translate(width, 0)
+      ctx.scale(-1, 1)
+      break
+    case 3:
+      // 180° rotation
+      ctx.translate(width, height)
+      ctx.rotate(Math.PI)
+      break
+    case 4:
+      // Vertical flip
+      ctx.translate(0, height)
+      ctx.scale(1, -1)
+      break
+    case 5:
+      // Vertical flip + 90° rotation (clockwise)
+      ctx.translate(height, 0)
+      ctx.rotate(Math.PI / 2)
+      ctx.scale(1, -1)
+      break
+    case 6:
+      // 90° rotation (clockwise)
+      ctx.translate(height, 0)
+      ctx.rotate(Math.PI / 2)
+      break
+    case 7:
+      // Horizontal flip + 90° rotation (clockwise)
+      ctx.translate(height, width)
+      ctx.rotate(-Math.PI / 2)
+      ctx.scale(-1, 1)
+      break
+    case 8:
+      // 270° rotation (clockwise, or 90° counter-clockwise)
+      ctx.translate(0, width)
+      ctx.rotate(-Math.PI / 2)
+      break
+    default:
+      // No transformation needed (orientation 1)
+      break
+  }
+}
+
+// Get dimensions after orientation is applied
+const getOrientedDimensions = (orientation: number, width: number, height: number): { width: number, height: number } => {
+  if (orientation >= 5 && orientation <= 8) {
+    // These orientations swap width and height
+    return { width: height, height: width }
+  }
+  return { width, height }
+}
+
+// Create high-quality WebP thumbnail from image file with proper EXIF orientation handling
 const createWebPThumbnail = (file: File, maxWidth: number = 1200): Promise<Blob> => {
-  return new Promise((resolve, reject) => {
-    const canvas = document.createElement('canvas')
-    const ctx = canvas.getContext('2d')
-    const img = new Image()
-    
-    img.onload = () => {
-      // Calculate new dimensions maintaining aspect ratio
-      const aspectRatio = img.width / img.height
-      let newWidth = maxWidth
-      let newHeight = maxWidth / aspectRatio
+  return new Promise(async (resolve, reject) => {
+    try {
+      // Read EXIF orientation
+      const orientation = await getExifOrientation(file)
+      
+      // Load image
+      const img = new Image()
+      const imgLoadPromise = new Promise<void>((imgResolve, imgReject) => {
+        img.onload = () => imgResolve()
+        img.onerror = () => imgReject(new Error('Failed to load image'))
+        img.src = URL.createObjectURL(file)
+      })
+      
+      await imgLoadPromise
+      
+      // Get dimensions considering orientation (for calculating aspect ratio)
+      const orientedDims = getOrientedDimensions(orientation, img.width, img.height)
+      const aspectRatio = orientedDims.width / orientedDims.height
+      
+      // Calculate target dimensions for the final output
+      let outputWidth = maxWidth
+      let outputHeight = maxWidth / aspectRatio
       
       // If image is smaller than maxWidth, keep original size
-      if (img.width < maxWidth) {
-        newWidth = img.width
-        newHeight = img.height
+      if (orientedDims.width < maxWidth) {
+        outputWidth = orientedDims.width
+        outputHeight = orientedDims.height
       }
       
-      canvas.width = newWidth
-      canvas.height = newHeight
+      // Create canvas with correct dimensions (swapped for rotated orientations)
+      const canvas = document.createElement('canvas')
+      const ctx = canvas.getContext('2d')
+      
+      if (!ctx) {
+        reject(new Error('Failed to get canvas context'))
+        return
+      }
+      
+      // Set canvas dimensions - swap for orientations 5-8
+      if (orientation >= 5 && orientation <= 8) {
+        canvas.width = outputHeight
+        canvas.height = outputWidth
+      } else {
+        canvas.width = outputWidth
+        canvas.height = outputHeight
+      }
       
       // Enable high-quality image rendering
-      if (ctx) {
-        ctx.imageSmoothingEnabled = true
-        ctx.imageSmoothingQuality = 'high'
+      ctx.imageSmoothingEnabled = true
+      ctx.imageSmoothingQuality = 'high'
+      
+      // Save context, apply orientation transformation, draw image, restore context
+      ctx.save()
+      applyOrientation(ctx, orientation, canvas.width, canvas.height)
+      
+      // After transformation, draw image scaled to canvas size
+      // For orientations 5-8, canvas is already swapped, so draw with swapped dimensions
+      if (orientation >= 5 && orientation <= 8) {
+        ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvas.height, canvas.width)
+      } else {
+        ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvas.width, canvas.height)
       }
       
-      // Draw and compress with high quality
-      ctx?.drawImage(img, 0, 0, newWidth, newHeight)
+      ctx.restore()
       
+      // Clean up object URL
+      URL.revokeObjectURL(img.src)
+      
+      // Convert to WebP blob
       canvas.toBlob((blob) => {
         if (blob) {
           resolve(blob)
@@ -181,10 +363,9 @@ const createWebPThumbnail = (file: File, maxWidth: number = 1200): Promise<Blob>
           reject(new Error('Failed to create WebP thumbnail'))
         }
       }, 'image/webp', 0.9) // 90% quality for better image quality
+    } catch (err) {
+      reject(err instanceof Error ? err : new Error('Failed to process image'))
     }
-    
-    img.onerror = () => reject(new Error('Failed to load image for thumbnail creation'))
-    img.src = URL.createObjectURL(file)
   })
 }
 
