@@ -1,12 +1,8 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import type { Schema } from '../../amplify/data/resource'
-import { generateClient } from 'aws-amplify/data'
 
 const router = useRouter()
-
-const client = generateClient<Schema>()
 
 // Form data
 const formData = ref({
@@ -45,7 +41,7 @@ const validateForm = () => {
   return true
 }
 
-// Submit RSVP
+// Submit RSVP (no longer saves to database)
 const submitRSVP = async () => {
   error.value = ''
   
@@ -55,60 +51,12 @@ const submitRSVP = async () => {
   
   isSubmitting.value = true
   
-  try {
-    // For now, we'll store the primary guest's name and all guest names in the Name field
-    const allGuestNames = formData.value.guestNames.slice(0, formData.value.numberOfGuests).join(', ')
-    
-    console.log('Submitting RSVP with data:', {
-      numberOfGuests: formData.value.numberOfGuests,
-      Name: allGuestNames,
-      email: formData.value.email.trim().toLowerCase(),
-      submittedAt: new Date().toISOString(),
-    })
-    
-    const result = await client.models.RSVP.create({
-      numberOfGuests: formData.value.numberOfGuests,
-      Name: allGuestNames,
-      email: formData.value.email.trim().toLowerCase(),
-      submittedAt: new Date().toISOString(),
-    })
-    
-    console.log('RSVP submission result:', result)
-    
-    // Check if the result has errors
-    if (result.errors && result.errors.length > 0) {
-      console.error('GraphQL errors:', result.errors)
-      error.value = `Submission failed: ${result.errors.map(e => e.message).join(', ')}`
-      return
-    }
-    
-    // Check if we actually got a created record
-    if (!result.data) {
-      console.error('No data returned from create operation')
-      error.value = 'Submission failed: No data returned from server'
-      return
-    }
-    
-    console.log('RSVP successfully created with ID:', result.data.id)
-    isSubmitted.value = true
-  } catch (err) {
-    console.error('Error submitting RSVP:', err)
-    
-    // More specific error messages
-    if (err instanceof Error) {
-      if (err.message.includes('Network')) {
-        error.value = 'Network error. Please check your connection and try again.'
-      } else if (err.message.includes('Unauthorized')) {
-        error.value = 'Authentication error. Please refresh the page and try again.'
-      } else {
-        error.value = `Submission failed: ${err.message}`
-      }
-    } else {
-      error.value = 'There was an unexpected error submitting your RSVP. Please try again.'
-    }
-  } finally {
-    isSubmitting.value = false
-  }
+  // Simulate API call delay for better UX
+  await new Promise(resolve => setTimeout(resolve, 500))
+  
+  // RSVP form now just shows success without saving to database
+  isSubmitted.value = true
+  isSubmitting.value = false
 }
 
 // Reset form

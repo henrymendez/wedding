@@ -1,12 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed } from 'vue'
-import { generateClient } from 'aws-amplify/data'
 import { uploadData, getUrl, list } from 'aws-amplify/storage'
-import type { Schema } from '../../amplify/data/resource'
 import PhotoSwipe from 'photoswipe'
 import 'photoswipe/style.css'
-
-const client = generateClient<Schema>()
 
 // State management
 const uploadedImages = ref<Array<{
